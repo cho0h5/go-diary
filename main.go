@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -31,18 +32,27 @@ func logging(f http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func getData(w http.ResponseWriter, r *http.Request) {
+func getPost(w http.ResponseWriter, r *http.Request) {
 	p := mux.Vars(r)
 	i := Data{Code: p["code"], Title: "title", Description: "desc"}
 	json.NewEncoder(w).Encode(i)
 }
 
+func postPost(w http.ResponseWriter, r *http.Request) {
+	// p := mux.Vars(r)
+	// i := Data{Code: p["code"], Title: "title", Description: "desc"}
+	// json.NewEncoder(w).Encode(i)
+	fmt.Fprint(w, "postPost test")
+}
+
 func main() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/test/{code}", logging(getData)).Methods("GET")
+	router.HandleFunc("/post/{code}", logging(getPost)).Methods("GET")
+	router.HandleFunc("/post}", logging(postPost)).Methods("POST")
+	router.Handle("/", http.FileServer(http.Dir("./static")))
 
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":3000", router)
 	// err := http.ListenAndServeTLS(":8080", "server.crt", "server.key", router)
 	// if err != nil {
 	// 	log.Fatal("ListenAndServe: ", err)
