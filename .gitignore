@@ -16,6 +16,6 @@
 
 # Custom
 *.log
-*.txt
 *.key
 *.crt
+data/
