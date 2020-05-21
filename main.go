@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -61,11 +62,22 @@ func postPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+func getPosts(w http.ResponseWriter, r *http.Request) {
+	files, err := ioutil.ReadDir("./data/")
+	if err != nil {
+		writeLog(err)
+	}
+	for _, f := range files {
+		fmt.Fprintln(w, f.Name())
+	}
+}
+
 func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/post/{code}", logging(getPost)).Methods("GET")
 	router.HandleFunc("/post", logging(postPost)).Methods("POST")
+	router.HandleFunc("/posts", logging(getPosts)).Methods("GET")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
